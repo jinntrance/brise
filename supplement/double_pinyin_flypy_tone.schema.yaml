@@ -13,6 +13,7 @@ schema:
           朙月拼音＋小鶴雙拼方案＋以符號按鍵-/<\輸入四聲
   dependencies:
     - stroke
+    - emoji
 
 switches:
   - name: ascii_mode
@@ -35,6 +36,7 @@ engine:
     - selector
     - navigator
     - express_editor
+    #- fluency_editor
   segmentors:
     - ascii_segmentor
     - matcher
@@ -46,10 +48,12 @@ engine:
     - table_translator@custom_phrase
     - reverse_lookup_translator
     - script_translator
+    - table_translator@emoji
   filters:
     - simplifier
     - uniquifier
 
+# 建拼音索引用到的配置
 speller:
   alphabet: 'zyxwvutsrqponmlkjihgfedcba-;/<,>\'
   initials: 'zyxwvutsrqponmlkjihgfedcba'
@@ -67,9 +71,9 @@ speller:
     - xform/^zh/V/
     - xform/iu/Q/
     - xform/ei/W/
+    - xform/([^ui])ang/$1H/
     - xform/[ui]ang/L/
-    - xform/uan(\d?)$/R$1/
-    - xform/([^iu]+)ang/$1H/
+    - xform/uan(\d?)/R$1/
     - xform/[uv]e/T/
     - xform/un/Y/
     - xform/uo/O/
@@ -89,7 +93,7 @@ speller:
     - xform/in(\d?)/B$1/
     - abbrev/^([A-Za-z]+)\d$/$1/
     - abbrev/^([bpmfdtnlgkhjqxrzcsVIU]).+(\d)$/$1$2/
-    - abbrev/^([bpmfdtnlgkhjqxrzcsVIU]).+$/$1/
+    #- abbrev/^([bpmfdtnlgkhjqxrzcsVIU]).+$/$1/ # 简拼实现
     - 'erase/^.*5$/'
     - 'xlit|QWERTYUIOPASDFGHJKLZXCVBNM1234|qwertyuiopasdfghjklzxcvbnm-/<\'
     - 'derive/^(.*)-$/$1;/'
@@ -97,11 +101,12 @@ speller:
     - 'derive/^(.*)\\$/$1>/'
     #- abbrev/^(.).+$/$1/
 
+
 translator:
   dictionary: terra_pinyin
-  spelling_hints: 8  # ～字以內候選標註完整帶調拼音
+  spelling_hints: 5  # ～字以內候選標註完整帶調拼音
   prism: double_pinyin_flypy_tone
-  preedit_format:
+  preedit_format: # 屏上显示的拼音
     - xform/([bpmfdtnljqx])n/$1iao/
     - xform/(\w)g/$1eng/
     - xform/(\w)q/$1iu/
@@ -161,7 +166,7 @@ translator:
     - 'xform ü/ ǘ'
     - 'xform ü[<,] ǚ'
     - 'xform ü[>\\] ǜ'
-  comment_format:
+  comment_format: #
     - xform ([aeiou])(ng?|r)([1234]) $1$3$2
     - xform ([aeo])([iuo])([1234]) $1$3$2
     - xform a1 ā
@@ -196,48 +201,15 @@ custom_phrase:
   dictionary: ""
   user_dict: custom_phrase
   db_class: stabledb
-  enable_completion: false
-  enable_sentence: false
+  enable_completion: true
+  enable_sentence: true
   initial_quality: 1
 
 reverse_lookup:
-  dictionary: stroke
-  enable_completion: true
-  prefix: "`"
-  suffix: "'"
-  tips: 〔筆畫〕
-  preedit_format:
-    - xlit/hspnz/一丨丿丶乙/
-  comment_format:
-    - xform ([aeiou])(ng?|r)([1234]) $1$3$2
-    - xform ([aeo])([iuo])([1234]) $1$3$2
-    - xform a1 ā
-    - xform a2 á
-    - xform a3 ǎ
-    - xform a4 à
-    - xform e1 ē
-    - xform e2 é
-    - xform e3 ě
-    - xform e4 è
-    - xform o1 ō
-    - xform o2 ó
-    - xform o3 ǒ
-    - xform o4 ò
-    - xform i1 ī
-    - xform i2 í
-    - xform i3 ǐ
-    - xform i4 ì
-    - xform u1 ū
-    - xform u2 ú
-    - xform u3 ǔ
-    - xform u4 ù
-    - xform v1 ǖ
-    - xform v2 ǘ
-    - xform v3 ǚ
-    - xform v4 ǜ
-    - xform/([nljqxy])v/$1ü/
-    - xform/eh[0-5]?/ê/
-    - xform/([a-z]+)[0-5]/$1/
+    dictionary: emoji
+    enable_completion: false
+    prefix: "`"
+    tips: 〔表情〕
 
 punctuator:
   import_preset: default
